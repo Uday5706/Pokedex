@@ -5,6 +5,7 @@ class PokeDetails extends StatefulWidget {
   final tag;
   final pokedetails;
   final Color color;
+
   const PokeDetails({
     super.key,
     this.tag,
@@ -17,7 +18,6 @@ class PokeDetails extends StatefulWidget {
 }
 
 class _PokeDetailsState extends State<PokeDetails> {
-  @override
   Color giveColor(String type) {
     return type == 'Fire'
         ? Colors.redAccent
@@ -52,6 +52,14 @@ class _PokeDetailsState extends State<PokeDetails> {
         : Colors.pinkAccent;
   }
 
+  // ✅ Helper function for spacing between table rows
+  TableRow _tableGap() {
+    return const TableRow(
+      children: [SizedBox(height: 10), SizedBox(height: 10)],
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: widget.color,
@@ -74,15 +82,14 @@ class _PokeDetailsState extends State<PokeDetails> {
                       ? Colors.black87
                       : Colors.white,
                 ),
-                onPressed: () {
-                  Navigator.pop(context); // goes back
-                },
+                onPressed: () => Navigator.pop(context),
               )
-            : null, // no back arrow if it's the first screen
+            : null,
       ),
       body: Stack(
         alignment: Alignment.center,
         children: [
+          // Pokeball background
           Positioned(
             top: 10,
             right: MediaQuery.of(context).size.width / 2 - 75,
@@ -92,24 +99,23 @@ class _PokeDetailsState extends State<PokeDetails> {
               fit: BoxFit.fitHeight,
             ),
           ),
+
+          // Pokémon Image
           Positioned(
             top: 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipRect(
-                  child: Align(
-                    alignment: Alignment.center, // focus on center part
-                    heightFactor: 0.8,
-                    child: CachedNetworkImage(
-                      imageUrl: widget.pokedetails['img'],
-                      height: 200,
-                    ),
-                  ),
+            child: ClipRect(
+              child: Align(
+                alignment: Alignment.center,
+                heightFactor: 0.8,
+                child: CachedNetworkImage(
+                  imageUrl: widget.pokedetails['img'],
+                  height: 200,
                 ),
-              ],
+              ),
             ),
           ),
+
+          // Pokémon types
           Positioned(
             top: 180,
             child: Row(
@@ -117,9 +123,11 @@ class _PokeDetailsState extends State<PokeDetails> {
               children: List.generate(
                 widget.pokedetails['type'].length,
                 (index) => Container(
-                  width: 80,
-                  margin: EdgeInsets.symmetric(horizontal: 5),
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black12,
                     borderRadius: BorderRadius.circular(20),
@@ -128,9 +136,10 @@ class _PokeDetailsState extends State<PokeDetails> {
                     alignment: Alignment.center,
                     child: Text(
                       widget.pokedetails['type'][index],
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
@@ -138,184 +147,110 @@ class _PokeDetailsState extends State<PokeDetails> {
               ),
             ),
           ),
+
+          // White Info Card
           Positioned(
             top: 230,
             bottom: 0,
             width: MediaQuery.of(context).size.width,
             child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 30, vertical: 40),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(30),
               ),
-              child: Column(
+              child: Table(
+                columnWidths: const {
+                  0: FixedColumnWidth(120),
+                  1: FlexColumnWidth(),
+                },
+                defaultVerticalAlignment: TableCellVerticalAlignment
+                    .middle, // 👈 Align vertically center
                 children: [
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Name
+                  TableRow(
                     children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          "Name",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                      Text(
-                        widget.pokedetails['name'],
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
+                      _labelText("Name"),
+                      _valueText(widget.pokedetails['name']),
                     ],
                   ),
-                  SizedBox(height: 10),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          "Height",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                      Text(
-                        widget.pokedetails['height'],
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          "Weight",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                      Text(
-                        widget.pokedetails['weight'],
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 90,
-                        child: Text(
-                          "Weakness",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 50),
-                      widget.pokedetails['weaknesses'] != null
-                          ? SizedBox(
-                              height: 35,
-                              width: 200,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                itemCount:
-                                    widget.pokedetails['weaknesses'].length,
-                                itemBuilder: (context, index) {
-                                  return Container(
-                                    margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 15,
-                                      vertical: 5,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: giveColor(
-                                        widget.pokedetails['weaknesses'][index],
-                                      ),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        widget.pokedetails['weaknesses'][index],
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Text(
-                              "No Weaknesses",
-                              style: TextStyle(
-                                color: Colors.black87,
-                                fontSize: 16,
-                              ),
-                            ),
-                    ],
-                  ),
-                  SizedBox(height: 10),
-                  Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      SizedBox(
-                        width: 90,
+                  _tableGap(),
 
-                        child: Text(
-                          "Evolutions",
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
-                          ),
+                  // Height
+                  TableRow(
+                    children: [
+                      _labelText("Height"),
+                      _valueText(widget.pokedetails['height']),
+                    ],
+                  ),
+                  _tableGap(),
+
+                  // Weight
+                  TableRow(
+                    children: [
+                      _labelText("Weight"),
+                      _valueText(widget.pokedetails['weight']),
+                    ],
+                  ),
+                  _tableGap(),
+
+                  // Weaknesses
+                  TableRow(
+                    children: [
+                      _labelText("Weakness"),
+                      SizedBox(
+                        height: 35,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount:
+                              widget.pokedetails['weaknesses']?.length ?? 0,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.only(right: 5),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 15,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: giveColor(
+                                  widget.pokedetails['weaknesses'][index],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                widget.pokedetails['weaknesses'][index],
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
-                      SizedBox(width: 50),
-                      widget.pokedetails['next_evolution'] != null
-                          ? SizedBox(
+                    ],
+                  ),
+                  _tableGap(),
+
+                  // Evolutions
+                  TableRow(
+                    children: [
+                      _labelText("Evolutions"),
+                      widget.pokedetails['next_evolution'] == null
+                          ? _valueText("No Evolutions")
+                          : SizedBox(
                               height: 35,
-                              width: 200,
                               child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
                                 itemCount:
-                                    widget.pokedetails['next_evolution'].length,
+                                    widget
+                                        .pokedetails['next_evolution']
+                                        ?.length ??
+                                    0,
                                 itemBuilder: (context, index) {
                                   return Container(
-                                    margin: EdgeInsets.fromLTRB(0, 0, 5, 0),
-                                    padding: EdgeInsets.symmetric(
+                                    margin: const EdgeInsets.only(right: 5),
+                                    padding: const EdgeInsets.symmetric(
                                       horizontal: 15,
                                       vertical: 5,
                                     ),
@@ -326,7 +261,7 @@ class _PokeDetailsState extends State<PokeDetails> {
                                     child: Text(
                                       widget
                                           .pokedetails['next_evolution'][index]['name'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
                                       ),
@@ -334,8 +269,7 @@ class _PokeDetailsState extends State<PokeDetails> {
                                   );
                                 },
                               ),
-                            )
-                          : SizedBox(width: 200, child: Text("No Evolution")),
+                            ),
                     ],
                   ),
                 ],
@@ -346,4 +280,24 @@ class _PokeDetailsState extends State<PokeDetails> {
       ),
     );
   }
+
+  // ✅ Reusable label widget
+  Widget _labelText(String text) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: Colors.black54,
+    ),
+  );
+
+  // ✅ Reusable value widget
+  Widget _valueText(String text) => Text(
+    text,
+    style: const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.bold,
+      color: Colors.black87,
+    ),
+  );
 }
